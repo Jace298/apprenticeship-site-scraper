@@ -12,6 +12,7 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+from requests.exceptions import ConnectionError
 
 class ApprenticeScraper:
     def __init__(self):
@@ -44,8 +45,9 @@ class ApprenticeScraper:
         print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Making web request")
         try:
             self.r = requests.get(self.url)
-        except requests.exceptions.ConnectionError:
+        except ConnectionError as err:
             print(f"{self.FAIL}[{self.now()}][ERROR]{self.ENDC} Connection error (Rate Limited), Canceling this loop.")
+            self.sendLogWebhook(err)
             return
         print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Web request completed")
 
@@ -122,6 +124,19 @@ class ApprenticeScraper:
             resp = webhook.execute()
 
             print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Webhook complete. Code: {resp.status_code}")
+    
+    def sendLogWebhook(self, err):
+        if type(err) == ConnectionError:
+            webhook = DiscordWebhook(url=self.discordUrl, content=f"<@370886991065382912> Connection error, check logs for more info.")
+            embed = DiscordEmbed(title="Connection Error", description="", color=0xFF0000)
+            embed.set_timestamp()
+            embed.add_embed_field(name="Error", value=f"{err}", inline=self.embedInline)
+            print(err)
+
+            webhook.add_embed(embed)
+            resp = webhook.execute()
+            print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Error Logging Webhook complete. Code: {resp.status_code}")
+            
 
     def saveJSON(self, data):
         newData = {}
