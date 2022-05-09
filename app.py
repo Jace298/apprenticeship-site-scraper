@@ -1,8 +1,3 @@
-#   r = adapter.send(request, **kwargs)
-#  File "/usr/local/lib/python3.9/dist-packages/requests/adapters.py", line 516, in send
-#    raise ConnectionError(e, request=request)
-#requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.findapprenticeship.service.gov.uk', port=443): Max retries exceeded with url: /apprenticeships?SearchField=All&Keywords=Software%20Developer&Location=NG17%202BB&WithinDistance=30&ApprenticeshipLevel=Advanced&DisabilityConfidentOnly=false&Latitude=53.132415&Longitude=-1.263422&Hash=835434138&SearchMode=Keyword&Category=&LocationType=NonNational&GoogleMapApiKey=AIzaSyAg5lwS3ugdAVGf5gdgNvLe_0-7XcMICIM&sortType=RecentlyAdded&SearchAction=Sort&resultsPerPage=50&DisplayDescription=true&DisplayDistance=true&DisplayClosingDate=true&DisplayStartDate=true&DisplayApprenticeshipLevel=true&DisplayWage=true (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fabbc04a5e0>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution'))
-
 import json
 from bs4 import BeautifulSoup
 import requests
