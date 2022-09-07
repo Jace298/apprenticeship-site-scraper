@@ -45,7 +45,7 @@ class ApprenticeScraper:
 
         print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Parsing response")
 
-        self.soup = BeautifulSoup(self.r.text, "lxml")
+        self.soup = BeautifulSoup(self.r.text, "html.parser")
         self.results = self.soup.find_all("li", class_="search-result sfa-section-bordered")
 
         apprenticeships = {}
@@ -64,17 +64,22 @@ class ApprenticeScraper:
             appURL = f"https://www.findapprenticeship.service.gov.uk/{res.h2.a['href']}"
 
             subR = self.makeRequest(appURL, True)
-            ss = BeautifulSoup(subR.text, "lxml")
+            ss = BeautifulSoup(subR.text, "html.parser")
 
             qualsReq = ss.find("div", id="vacancy-qualifications-required").contents
             provider = ss.find("p", id="vacancy-provider-name").text
-            compURL = ss.find("a", id="vacancy-employer-website")["href"]
             startDate = ss.find("p", id="vacancy-start-date").text
             fullDesc = self.formatStr(ss.find("div", id="vacancy-full-descrpition").text)
 
             fullDesc = self.boldStr(fullDesc, "What will the apprentice be doing?")
             fullDesc = self.boldStr(fullDesc, "What training will the apprentice take and what qualification will the apprentice get at the end?")
             fullDesc = self.boldStr(fullDesc, "What is the expected career progression after this apprenticeship?")
+
+            try:
+                compURL = ss.find("a", id="vacancy-employer-website")["href"]
+            except TypeError:
+                print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} No Company Website Supplied")
+                compURL = "N/A"
 
 
             for i in qualsReq:
@@ -102,7 +107,7 @@ class ApprenticeScraper:
                 "Full Description": fullDesc
                 }})
 
-            # print(f"Title: {appTitle}\nCompany: {appCompany}\nDate Posted: {appDatePosted}\nNumber of  Positions: {appNumPositions}\nDistance: {appDistance} miles\nClosing Date: {appClosingDate}  \nPotential Start Date: {appStartDate}\nLevel: {appLevel}\nWage: {appWage}\nDescription   (Short): {appShortDesc}\n")
+            print(f"Title: {appTitle}\nCompany: {appCompany}\nDate Posted: {appDatePosted}\nNumber of  Positions: {appNumPositions}\nDistance: {appDistance} miles\nClosing Date: {appClosingDate}  \nPotential Start Date: {appStartDate}\nLevel: {appLevel}\nWage: {appWage}\nDescription   (Short): {appShortDesc}\n")
 
         updated = self.saveJSON(apprenticeships)
         print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Parsing complete, Found {str(len(updated))} new apprenticeships.")
@@ -141,7 +146,7 @@ class ApprenticeScraper:
 
             webhook.add_embed(embed)
             resp = webhook.execute()
-
+            sleep(1)
             webhook = DiscordWebhook(url=self.discordUrl, content=v["Full Description"])
             resp2 = webhook.execute()
 
