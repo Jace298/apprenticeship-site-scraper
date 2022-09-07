@@ -107,7 +107,7 @@ class ApprenticeScraper:
                 "Full Description": fullDesc
                 }})
 
-            print(f"Title: {appTitle}\nCompany: {appCompany}\nDate Posted: {appDatePosted}\nNumber of  Positions: {appNumPositions}\nDistance: {appDistance} miles\nClosing Date: {appClosingDate}  \nPotential Start Date: {appStartDate}\nLevel: {appLevel}\nWage: {appWage}\nDescription   (Short): {appShortDesc}\n")
+            #print(f"Title: {appTitle}\nCompany: {appCompany}\nDate Posted: {appDatePosted}\nNumber of  Positions: {appNumPositions}\nDistance: {appDistance} miles\nClosing Date: {appClosingDate}  \nPotential Start Date: {appStartDate}\nLevel: {appLevel}\nWage: {appWage}\nDescription   (Short): {appShortDesc}\n")
 
         updated = self.saveJSON(apprenticeships)
         print(f"{self.OKBLUE}[{self.now()}][INFO]{self.ENDC} Parsing complete, Found {str(len(updated))} new apprenticeships.")
