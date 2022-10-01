@@ -8,6 +8,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 from requests.exceptions import ConnectionError
+from bs4.element import Tag
 
 class ApprenticeScraper:
     def __init__(self):
@@ -83,9 +84,10 @@ class ApprenticeScraper:
 
 
             for i in qualsReq:
-                if str(i) == "<br/>": qualsReq.remove(i)
+                if str(i) in "<br/>": qualsReq.remove(i)
 
-            for i in range(len(qualsReq)): qualsReq[i] = self.formatStr(qualsReq[i])
+            for i in range(len(qualsReq)): 
+                qualsReq[i] = str(self.formatStr(qualsReq[i]))
             
             apprenticeships.update({appCompany: {
                 "Title": appTitle,
@@ -195,6 +197,7 @@ class ApprenticeScraper:
             return {}
 
     def formatStr(self, string):
+        if type(string) == Tag: return
         if "position available" in string:
             string = string.lstrip().rstrip().replace("- ", "").replace(")", "").replace("position    available", "").replace("s", "")
             return string[:4] + "s" + string[4:]
@@ -225,7 +228,10 @@ class ApprenticeScraper:
         return r
 
     def boldStr(self, str, subStr):
-        startPos = str.index(subStr)
+        try:
+            startPos = str.index(subStr)
+        except ValueError:
+            return str
         endPos = startPos + len(subStr) + 3
 
         if startPos != 0:
